@@ -1,0 +1,30 @@
+pytorch1.11.0:ö
+7
+input
+onnx::MatMul_12onnx::Add_6MatMul_0"MatMul
+0
+model.0.bias
+onnx::Add_6input.1Add_1"Add
+'
+input.1onnx::MatMul_8Relu_2"Relu
+A
+onnx::MatMul_8
+onnx::MatMul_13onnx::Add_10MatMul_3"MatMul
+0
+model.2.bias
+onnx::Add_10outputAdd_4"Addtorch-jit-export*<
+Bmodel.0.biasJ(À‘?ŽX¾Å›@?¸©?„¦¿öÄ˜?M.ä¾Ë<c?¿*‹?¾Áj¾*$Bmodel.2.biasJñ>Öw½º›ï>—¿*i
+Bonnx::MatMul_12JP)•y?æß>Óø”¿„}5?Ÿ(æ¾6¹E@G­‚¾Ãì¿lÑÀjuÂ¾º|¿r­¿¼Ü\p¿÷^@„Î­=·sµ¿ŽÐÅ½Ò™!?åÂ§¿òõ=*º
+Bonnx::MatMul_13J âŠ>Í—?l,N¿ÓÝC>íe[=çLÊ½Ü]Ž>Hlh¾¬œ£?Â¨ô¾Ãà®¼‹´x¿»àù¿íÐ¿~q¾?ãW	@]Rÿ=ø’#>ÝÕ£=»¦¾c"B¿)/@?lÀ¢Q?t»¾Áh¾ì Ž¼Â*¾å‘º<ö³¾®G?H’c½²—ä?»ê¿Ê°ë>AÜ¿C²»½c¹Ÿ¾ªh>¾µ2“¾Z%
+input
+
+
+batch_size
+
+b&
+output
+
+
+batch_size
+
+B
