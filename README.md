@@ -1,10 +1,13 @@
-# Efficient Preimage Approximation for Neural Networks via Linear Relaxation
-This repository includes
+# Provable Preimage Under-Approximation for Neural Networks
+
+This is the repository for preimage under-approximation approach ([PreimgApprox](https://arxiv.org/abs/2305.03686)). It includes
 * the implementation of the preimage approximation algorithm
 * the benchmark data
 * the required environment configuration
 * instructions on how to reproduce the results
-* github repository of alpha-beta-crown for bound generation
+* github repository of alpha-beta-crown for bound propagation
+(This project is licensed under the terms of the MIT license.)
+
 
 ## Components
 * `preimage_main.py`: main interface for evaluation
@@ -20,6 +23,11 @@ This repository includes
 * `preimage_subdomain_queue.py`: module for subdomain class and management
 * `preimage_utils.py`: utility module for calling upon crown
 * `preimage_optimize_input_poly.py`: module for computing polytope-volume guided objective function (contained in `alpha-beta-CROWN/auto_LiRPA`) 
+
+Below we introduce a list of core modules for preimage abstraction:
+
+1. auto_LiPRA
+* optimize_input_poly: this file contains the core function to compute the approximated preimage polytope volume under three different designs, including: `concretize_poly_vol` and  `concretize_poly_vol_LSE` for preimage polytope volume without and with LSE function for K-specification for input splitting planes.
 
 ## Environment requirements
 We recommend installing the required dependencies with conda using the following command:
