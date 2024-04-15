@@ -1,6 +1,7 @@
 # Provable Preimage Under-Approximation for Neural Networks
 
-This is the repository for preimage under-approximation approach ([PreimgApprox](https://arxiv.org/abs/2305.03686)). It includes
+This is the repository for preimage under-approximation approach ([PreUpprox](https://arxiv.org/abs/2305.03686)). 
+It includes
 * the implementation of the preimage approximation algorithm
 * the benchmark data
 * the required environment configuration
