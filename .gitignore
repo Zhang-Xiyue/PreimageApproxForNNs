@@ -1,0 +1,6 @@
+# IDE configuration files
+.vscode/
+# OS-specific files
+.DS_Store
+# Legacy directories
+legacy/
