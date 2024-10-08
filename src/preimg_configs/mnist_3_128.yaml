@@ -1,0 +1,6 @@
+model:
+  name: mnist_3_128
+  path: /home/xiyue/LinInv/TrainModel/trained_models/mnist_mlp_3.pt
+
+  data:
+  dataset: MNIST_ERAN

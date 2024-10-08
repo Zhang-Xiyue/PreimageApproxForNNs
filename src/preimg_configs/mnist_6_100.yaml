@@ -1,0 +1,32 @@
+preimage:
+  patch: False
+  sample_dir: "/home/xiyue/LinInv/sample_seed_data/mnist_6_100/"
+general:
+  complete_verifier: bab
+model:
+  name: mnist_6_100
+  path: models/eran/mnist_6_100_nat.pth
+  onnx_path: None
+data:
+  dataset: MNIST_ERAN_UN
+  start: 0
+  end: 1
+  num_outputs: 10
+  std: [1.0]
+  mean: [0.0]
+specification:
+  epsilon: 0.03
+  type: 'lp'
+  robustness_type: "runnerup"
+attack:
+  pgd_order: after
+solver:
+  batch_size: 1
+  beta-crown:
+    iteration: 20
+bab:
+  timeout: 300
+  branching:
+    reduceop: max
+    input_split:
+      enable: False

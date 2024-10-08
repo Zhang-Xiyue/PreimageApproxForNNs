@@ -1,0 +1,23 @@
+preimage:
+  threshold: 0.9
+  label: 0
+  runner_up: 1
+  vcas_idx: 0
+  atk_tp: l_inf
+model:
+  name:  auto_park_2relu
+  path: /home/xiyue/LinInv/model_dir/model_auto_park_auto_park_model_10_2.pt
+  onnx_path: None
+data:
+  dataset: auto_park_part
+  num_outputs: 4
+  start: 0
+  end: 1
+specification:
+  type: 'bound'
+  robustness_type: "verified-acc"
+bab:
+  branching:
+    input_split:
+      enable: True
+

@@ -1,0 +1,19 @@
+preimage:
+  threshold: 0.9
+  label: 0
+model:
+  name:  two_relu_layer_toy_model
+  path: /home/xiyue/LinInv/model_dir/two_relu_layer_toy_model.pt
+  onnx_path: None
+data:
+  dataset: Customized_toy_model
+  num_outputs: 1
+  start: 0
+  end: 1
+specification:
+  type: 'bound'
+bab:
+  branching:
+    input_split:
+      enable: True
+

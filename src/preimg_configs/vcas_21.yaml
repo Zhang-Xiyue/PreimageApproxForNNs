@@ -1,0 +1,15 @@
+preimage:
+  threshold: 0.9
+  label: 0
+  runner_up: 1
+model:
+  name:  None
+  path: None
+  onnx_path: /home/xiyue/LinInv/model_dir/VCAS_21/VertCAS_1.onnx
+data:
+  dataset: vcas
+  num_outputs: 9
+  start: 0
+  end: 1
+specification:
+  type: 'bound'

@@ -1,52 +1,36 @@
-# Provable Preimage Under-Approximation for Neural Networks
+# Preimage Approximation for Neural Networks
+This repository contains the code and data used in the paper:
 
-This is the repository for preimage under-approximation approach ([PreUpprox](https://arxiv.org/abs/2305.03686)). 
-It includes
-* the implementation of the preimage approximation algorithm
-* the benchmark data
-* the required environment configuration
-* instructions on how to reproduce the results
-* github repository of alpha-beta-crown for bound propagation
-(This project is licensed under the terms of the MIT license.)
+"PREMAP: A Unifying PREiMage APproximation Framework for Neural Networks"
+Authors: Xiyue Zhang, Benjie Wang, Marta Kwiatkowska, Huan Zhang
 
+## Table of Contents
+- Introduction
+- Installation
+- Usage
+- Data
+- Citation
+- License
+- Contact
 
-## Components
-* `preimage_main.py`: main interface for evaluation
-* `preimage_approx_batch_input_split.py`: module for global branching and refinement
-* `preimage_arguments.py`: module for setting up alpha-beta-crown arguments
-* `preimage_branching_heuristics.py`: module for feature-splitting parallelization
-* `preimage_compute_volume.py`: module for computing the volume of preimage polytopes
-* `preimage_CROWN_solver.py`: module for linear bound computation
-* `preimage_model_utils.py`: utility module for model wrapper and loading
-* `preimage_parse_args.py`: module for setting up preimage approximation arguments
-* `preimage_polyhedron_util.py`: utility module for polytope (under-approximation) evaluation
-* `preimage_read_vnnlib.py`: module for vnnlib wrapper
-* `preimage_subdomain_queue.py`: module for subdomain class and management
-* `preimage_utils.py`: utility module for calling upon crown
-* `preimage_optimize_input_poly.py`: module for computing polytope-volume guided objective function (contained in `alpha-beta-CROWN/auto_LiRPA`) 
+## Introduction
+This repository provides the implementation of a general and flexible preimage approximation framework designed to generate inputs that satisfy specific target properties.
+It supports both under-approximation and over-approximation, with an anytime algorithm design that balances approximation precision and computational cost for user-specified trade-offs.
 
-Below we introduce a list of core modules for preimage abstraction:
-
-1. auto_LiPRA
-* optimize_input_poly: this file contains the core function to compute the approximated preimage polytope volume under three different designs, including: `concretize_poly_vol` and  `concretize_poly_vol_LSE` for preimage polytope volume without and with LSE function for K-specification for input splitting planes.
-
-## Environment requirements
-We recommend installing the required dependencies with conda using the following command:
-```
-conda env create -f environment.yml
-```
-
-## Benchmark tasks and evaluation
-### Benchmark tasks
-The models of the benchmark tasks are stored in the `model_dir` folder, including models for vehicle parking, VCAS, and reinforcement learning tasks from [VNN-COMP 2022](https://github.com/ChristopherBrix/vnncomp2022\_benchmarks). 
-
-### Evaluation
-To run the preimage approximation, use the following command:
-``` bash
-python preimage_main.py --dataset 'vcas'
-```
-* use the `dataset` argument to specify the benchmark task.
-* use the `result_dir` argument to specify the directory for saving evaluation results.
-* usage of other arguments is detailed in the arguments parsing file.
-
- 
+## Installation
+Here summarises the general steps to take for setting up the project on your local machine.
+1. Clone the repository
+'''
+git clone https://github.com/Zhang-Xiyue/PreimageApproxForNNs.git
+cd PreimageApproxForNNs
+'''
+2. Set up the virtual environment
+You can select any environment manager depending on your habit. 
+Set up the environment using the *requirements* file 
+'''
+pip install -r requirements.txt
+'''
+## Usage
+Example scripts
+## Data 
+The dataset used for this project is available at [VNN-COMP2022](https://github.com/ChristopherBrix/vnncomp2022 benchmarks).

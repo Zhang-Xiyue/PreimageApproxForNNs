@@ -1,0 +1,14 @@
+preimage:
+  threshold: 0.9
+  label: 0
+model:
+  name:  beta_demo_model
+  path: None
+  onnx_path: None
+data:
+  dataset: Customized_beta_demo_data
+  num_outputs: 1
+  start: 0
+  end: 1
+specification:
+  type: 'bound'
