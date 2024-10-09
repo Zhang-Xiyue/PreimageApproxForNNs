@@ -54,12 +54,16 @@ class ConfigHandler:
         self.add_argument('--config', type=str, help='Path to YAML format config file.', hierarchy=None)
         # Add preimage arguments
         h = ["preimage"]
+        self.add_argument("--sample_dir", type=str, default=None, help='Directory to save and load samples for loss estimation and polytope coverage.',
+                          hierarchy=h + ["sample_dir"]) 
+        self.add_argument("--result_dir", type=str, default=None, help='Result directory to specify for saving your results.',
+                          hierarchy=h + ["result_dir"])       
         self.add_argument("--over_approx", type=bool, default=True, help='To generate preimage over-approximation or not.',
                     hierarchy=h + ["over_approx"])
         self.add_argument("--under_approx", type=bool, default=False, help='To generate preimage under-approximation or not.',
                     hierarchy=h + ["under_approx"])
-        self.add_argument("--threshold", type=float, default=1.25, help='Target preimage coverage threshold for termination.',
-                          hierarchy=h + ["threshold"])
+        self.add_argument("--threshold", type=float, default=1.25, help='Target preimage coverage threshold for termination. No less than 1 for over-approximation and no greater than 1 for under-approximation.',
+                    hierarchy=h + ["threshold"])
         self.add_argument("--label", type=int, default=1, help='Indicate which label to build input preimage for.',
                           hierarchy=h + ["label"])
         self.add_argument("--runner_up", type=int, default=0, help='Indicate which label to build safety property for.',
@@ -81,11 +85,7 @@ class ConfigHandler:
         self.add_argument("--l0_norm", type=int, default=24, help='Indicate the l0 norm to build input preimage for.',
                           hierarchy=h + ["l0_norm"])      
         self.add_argument("--sample_num", type=int, default=10000, help='Sample number to estimate preimage coverage.',
-                          hierarchy=h + ["sample_num"])     
-        self.add_argument("--sample_dir", type=str, default="/home/xiyue/LinInv/sample_seed_data/mnist_6_100/", help='Sample directory for loss estimation and polytope coverage.',
-                          hierarchy=h + ["sample_dir"]) # mnist_6_100/
-        self.add_argument("--result_dir", type=str, default="/home/xiyue/LinInv/journal_result_dir", help='Result directory for spliting on intermediate neurons.',
-                          hierarchy=h + ["result_dir"])          
+                          hierarchy=h + ["sample_num"])        
         self.add_argument("--branch_budget", type=int, default=2000, help='Branching budget to see how many preimage polytopes we set as upper limit.',
                           hierarchy=h + ["branch_budget"])        
         self.add_argument("--multi_spec", type=bool, default=False, help='The multi specification support for preimage analysis.',
@@ -155,10 +155,10 @@ class ConfigHandler:
 
         h = ["model"]
         self.add_argument("--model", type=str, default="mnist_6_100", help='Model name. Will be evaluated as a python statement.',
-                          hierarchy=h + ["name"]) #  "auto_park_2relu", tested on "Customized(\"custom_model_data\", \"two_relu_toy_model\", in_dim=2, out_dim=2)"
-        self.add_argument("--load_model", type=str, default="/home/xiyue/LinInv/alpha-beta-CROWN/complete_verifier/models/eran/mnist_6_100_nat.pth",
+                          hierarchy=h + ["name"]) # e.g., "mnist_6_100"
+        self.add_argument("--load_model", type=str, default="models/eran/mnist_6_100_nat.pth",
                           help='Load pretrained model from this specified path.', hierarchy=h + ["path"]) 
-        # "/home/xiyue/LinInv/model_dir/model_auto_park_auto_park_model_10_2.pt", "/home/xiyue/LinInv/alpha-beta-CROWN/complete_verifier/models/eran/mnist_6_100_nat.pth"
+        # e.g., "./models/eran/mnist_6_100_nat.pth"
         self.add_argument("--onnx_path", type=str, default=None, help='Path to .onnx model file.',
                           hierarchy=h + ["onnx_path"])
         self.add_argument("--onnx_path_prefix", type=str, default='',
@@ -188,13 +188,13 @@ class ConfigHandler:
         h = ["data"]
         self.add_argument("--dataset", type=str, default="MNIST_ERAN_UN",
                           help="Dataset name. Dataset must be defined in utils.py. For customized data, checkout custom_model_data.py.",
-                          hierarchy=h + ["dataset"]) # tested on "Customized(\"custom_model_data\", \"simple_box_data\")"
+                          hierarchy=h + ["dataset"]) # e.g., "MNIST_ERAN_UN"
+        self.add_argument('--num_outputs', type=int, default=10, help="Number of classes for classification problem.",
+                          hierarchy=h + ["num_outputs"]) # e.g., 10 for a 10-class classification problem
         self.add_argument("--start", type=int, default=0, help='Start from the i-th property in specified dataset.',
                           hierarchy=h + ["start"])
         self.add_argument("--end", type=int, default=1, help='End with the (i-1)-th property in the dataset.',
                           hierarchy=h + ["end"])
-        self.add_argument('--num_outputs', type=int, default=10, help="Number of classes for classification problem.",
-                          hierarchy=h + ["num_outputs"])
         self.add_argument("--select_instance", type=int, nargs='+', default=None,
                           help='Select a list of instances to verify.', hierarchy=h + ["select_instance"])
         self.add_argument("--mean", nargs='+', type=float, default=0.0, help='Mean vector used in data preprocessing.',
@@ -286,7 +286,7 @@ class ConfigHandler:
         h = ["solver", "beta-crown"]
         self.add_argument("--lr_alpha", type=float, default=0.2,
                           help='Learning rate for optimizing alpha during branch and bound.',
-                          hierarchy=h + ["lr_alpha"]) # 0.2 set for alpha-crown without dual 0.01
+                          hierarchy=h + ["lr_alpha"]) 
         self.add_argument("--lr_beta", type=float, default=0.05,
                           help='Learning rate for optimizing beta during branch and bound.', hierarchy=h + ["lr_beta"]) #0.05
         self.add_argument("--beta_lr_decay", type=float, default=0.98,
@@ -297,6 +297,7 @@ class ConfigHandler:
         self.add_argument("--iteration", type=int, default=20,
                           help='Number of iteration for optimizing alpha and beta during branch and bound.',
                           hierarchy=h + ["iteration"])
+        # set beta to be True for using Lagrangian multipliers for optimisation, False otherwise.
         self.add_argument('--no_beta', type=bool, default=False,
                           help='Disable/Enable beta split constraint (this option is for ablation study only and should not be used normally).',
                           hierarchy=h + ["beta"])
@@ -331,7 +332,7 @@ class ConfigHandler:
         self.add_argument('--no_skip_with_refined_bound', action='store_false', dest='skip_with_refined_bound',
                           hierarchy=h + ['skip_with_refined_bound'],
                           help='By default we skip the second alpha-CROWN execution if all slopes are already initialized. Setting this to avoid this feature.')
-
+        # mip not used for preimage analysis.
         h = ["solver", "mip"]
         self.add_argument('--mip_multi_proc', type=int, default=None,
                           help='Number of multi-processes for mip solver. Each process computes a mip bound for an intermediate neuron. Default (None) is to auto detect the number of CPU cores (note that each process may use multiple threads, see the next option).',
@@ -362,6 +363,7 @@ class ConfigHandler:
         self.add_argument("--decision_thresh", type=float, default=0,
                           help='Decision threshold of lower bounds. When lower bounds are greater than this value, verification is successful. Set to 0 for robustness verification.',
                           hierarchy=h + ["decision_thresh"])
+        # NOTE timeout is also used as a termination condition for the preimage refinement procedure.
         # FIXME timeout should not be under "bab"
         self.add_argument("--timeout", type=float, default=36000,
                           help='Timeout (in second) for verifying one image/property.', hierarchy=h + ["timeout"])
@@ -391,8 +393,45 @@ class ConfigHandler:
         self.add_argument("--no_interm_transfer", action='store_false', dest='interm_transfer',
                           help='Skip the intermediate bound transfer to save transfer-to-CPU time. Require intermediate bound does not change. Caution: cannot be used with cplex cut or intermediate beta refinement.',
                           hierarchy=h + ['interm_transfer'])
-
-        # FIXME: cut should not be under bab. We don't have to use bab with cuts. It should be under "solver" category.
+        # NOTE use "preimg" as the default branching method for preimage analysis.
+        h = ["bab", "branching"]
+        self.add_argument("--branching_method", default="preimg",
+                          choices=["preimg"], help='Branching heuristic. babsr is fast but less accurate; fsb is slow but most accurate; kfsb is usually a balance; kfsb-intercept-only is faster but may lead to worse branching; sb is fast smart branching which relies on the A matrix.',
+                          hierarchy=h + ["method"])
+        self.add_argument("--branching_candidates", type=int, default=3,
+                          help='Number of candidates to consider when using fsb or kfsb. More candidates lead to slower but better branching.',
+                          hierarchy=h + ["candidates"])
+        self.add_argument("--branching_reduceop", choices=["min", "max", "mean", "auto"], default="max",
+                          help='Reduction operation to compute branching scores from two sides of a branch (min or max). max can work better on some models.',
+                          hierarchy=h + ["reduceop"])
+        self.add_argument("--sb_coeff_thresh", default=1e-3, type=float,
+                          help='Clamp values of coefficient matrix (A matrix) for sb branching heuristic.',
+                          hierarchy=h + ["sb_coeff_thresh"])
+        # NOTE set "enable_input_split" to True to enable input split, and False to enable unstable neuron split.
+        h = ["bab", "branching", "input_split"]
+        self.add_argument("--enable_input_split", type=bool, default=False,
+                          help='Branch on input domain rather than unstable neurons.', hierarchy=h + ["enable"])
+        self.add_argument('--enhanced_bound_prop_method', default="alpha-crown",
+                          choices=["alpha-crown", "crown", "forward+crown", "crown-ibp"],
+                          help='Specify a tighter bound propagation method if a problem cannot be verified after --input_split_enhanced_bound_patience.',
+                          hierarchy=h + ["enhanced_bound_prop_method"])
+        self.add_argument('--enhanced_branching_method', default="naive", choices=["sb", "naive"],
+                          help='Specify a branching method if a problem cannot be verified after --input_split_enhanced_bound_patience.',
+                          hierarchy=h + ["enhanced_branching_method"])
+        self.add_argument("--input_split_enhanced_bound_patience", type=int, default=1e8,
+                          help='Time in seconds that will use an enhanced bound propagation method (e.g., alpha-CROWN) to bound input split sub domains.',
+                          hierarchy=h + ["enhanced_bound_patience"])
+        self.add_argument("--input_split_attack_patience", type=int, default=1e8,
+                          help='Time in seconds that will start PGD attack to find adv examples during input split.',
+                          hierarchy=h + ["attack_patience"])
+        self.add_argument("--input_split_adv_check", type=int, default=0,
+                          help='After the number of visited nodes, we will run adv_check in input split.',
+                          hierarchy=h + ["adv_check"])
+        self.add_argument("--sort_domain_interval", type=int, default=-1,
+                          help='If unsorted domains are used, sort the domains every sort_domain_interval iterations.',
+                          hierarchy=h + ["sort_domain_interval"])
+        # Cut options are not needed for preimage analysis.
+        # FIXME: cut should not be under bab. We don't have to use bab with cuts. It should be under "solver" category.   
         h = ["bab", "cut"]
         self.add_argument('--enable_cut', action='store_true', dest='enable_cut', help='Enable cutting planes using GCP-CROWN.',
                           hierarchy=h + ["enabled"])
@@ -444,45 +483,7 @@ class ConfigHandler:
                           help='Fix intermediate bounds when GCP-CROWN cuts are used.',
                           hierarchy=h + ["fix_intermediate_bounds"])
 
-        h = ["bab", "branching"]
-        self.add_argument("--branching_method", default="preimg",
-                          choices=["babsr", "fsb", "kfsb", "sb", "kfsb-intercept-only", "naive", "preimg"],
-                          help='Branching heuristic. babsr is fast but less accurate; fsb is slow but most accurate; kfsb is usually a balance; kfsb-intercept-only is faster but may lead to worse branching; sb is fast smart branching which relies on the A matrix.',
-                          hierarchy=h + ["method"])
-        self.add_argument("--branching_candidates", type=int, default=3,
-                          help='Number of candidates to consider when using fsb or kfsb. More candidates lead to slower but better branching.',
-                          hierarchy=h + ["candidates"])
-        self.add_argument("--branching_reduceop", choices=["min", "max", "mean", "auto"], default="max",
-                          help='Reduction operation to compute branching scores from two sides of a branch (min or max). max can work better on some models.',
-                          hierarchy=h + ["reduceop"])
-        self.add_argument("--sb_coeff_thresh", default=1e-3, type=float,
-                          help='Clamp values of coefficient matrix (A matrix) for sb branching heuristic.',
-                          hierarchy=h + ["sb_coeff_thresh"])
-
-        h = ["bab", "branching", "input_split"]
-        self.add_argument("--enable_input_split", type=bool, default=False,
-                          help='Branch on input domain rather than unstable neurons.', hierarchy=h + ["enable"])
-        self.add_argument('--enhanced_bound_prop_method', default="alpha-crown",
-                          choices=["alpha-crown", "crown", "forward+crown", "crown-ibp"],
-                          help='Specify a tighter bound propagation method if a problem cannot be verified after --input_split_enhanced_bound_patience.',
-                          hierarchy=h + ["enhanced_bound_prop_method"])
-        self.add_argument('--enhanced_branching_method', default="naive", choices=["sb", "naive"],
-                          help='Specify a branching method if a problem cannot be verified after --input_split_enhanced_bound_patience.',
-                          hierarchy=h + ["enhanced_branching_method"])
-        self.add_argument("--input_split_enhanced_bound_patience", type=int, default=1e8,
-                          help='Time in seconds that will use an enhanced bound propagation method (e.g., alpha-CROWN) to bound input split sub domains.',
-                          hierarchy=h + ["enhanced_bound_patience"])
-        self.add_argument("--input_split_attack_patience", type=int, default=1e8,
-                          help='Time in seconds that will start PGD attack to find adv examples during input split.',
-                          hierarchy=h + ["attack_patience"])
-        self.add_argument("--input_split_adv_check", type=int, default=0,
-                          help='After the number of visited nodes, we will run adv_check in input split.',
-                          hierarchy=h + ["adv_check"])
-        self.add_argument("--sort_domain_interval", type=int, default=-1,
-                          help='If unsorted domains are used, sort the domains every sort_domain_interval iterations.',
-                          hierarchy=h + ["sort_domain_interval"])
-
-        h = ["bab", "attack"]  # BaB-Attack options.
+        h = ["bab", "attack"]  # BaB-Attack options. No need for setting these options for preimage generation.
         self.add_argument("--enable_bab_attack", action='store_true',
                           help='Enable beam search based BaB-attack.', hierarchy=h + ["enabled"])
         self.add_argument("--beam_candidates_number", type=int, default=8,
@@ -509,7 +510,7 @@ class ConfigHandler:
                           help='Batch size for full alpha-CROWN to refined intermediate bounds for mip solver attack (to avoid OOM), default None to be the same as mip_multi_proc.',
                           hierarchy=h + ["refined_batch_size"])
 
-        h = ["attack"]
+        h = ["attack"] # Attack options are not used for preimage generation.
         self.add_argument('--pgd_order', choices=["before", "after", "middle", "skip"], default="skip",
                           help='Run PGD attack before/after incomplete verification, or skip it.', hierarchy=h + ["pgd_order"])
         self.add_argument('--pgd_steps', type=int, default=100, help="Steps of PGD attack.",
