@@ -1,5 +1,4 @@
 #########################################################################
-##  This file contains the utility function for preimage approximation ##
 ##                                                                     ##
 ##     This program is licenced under the BSD 3-Clause License,        ##
 ##        contained in the LICENCE file in this directory.             ##

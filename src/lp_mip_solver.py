@@ -1,11 +1,4 @@
 #########################################################################
-##         This file is part of the alpha-beta-CROWN verifier          ##
-##                                                                     ##
-## Copyright (C) 2021, Huan Zhang <huan@huan-zhang.com>                ##
-##                     Kaidi Xu <xu.kaid@northeastern.edu>             ##
-##                     Shiqi Wang <sw3215@columbia.edu>                ##
-##                     Zhouxing Shi <zshi@cs.ucla.edu>                 ##
-##                     Yihan Wang <yihanwang@ucla.edu>                 ##
 ##                                                                     ##
 ##     This program is licenced under the BSD 3-Clause License,        ##
 ##        contained in the LICENCE file in this directory.             ##

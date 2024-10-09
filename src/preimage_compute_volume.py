@@ -1,8 +1,6 @@
 #########################################################################
-##   This file is for preimage volume computation                      ##
 ##                                                                     ##
-## Copyright (C) 2022-2023, Xiyue Zhang                                ##
-##     This program is licenced under the BSD 3-Clause License,        ##
+##        This program is licenced under the MIT License,              ##
 ##        contained in the LICENCE file in this directory.             ##
 ##                                                                     ##
 #########################################################################
