@@ -34,7 +34,7 @@ pip install -r requirements.txt
 ## Usage
 Example scripts
 ## Data 
-The dataset used for this project is available at [VNN-COMP2022](https://github.com/ChristopherBrix/vnncomp2022 benchmarks).
+The dataset used for this project is available at [VNN-COMP2022](https://github.com/ChristopherBrix/vnncomp2022).
 
 ## Citation
 - The **Preimage Under-Approximation** paper provides an abstraction and refinement framework to computer preimage under-approximations (inputs) for targeted output specifications.
