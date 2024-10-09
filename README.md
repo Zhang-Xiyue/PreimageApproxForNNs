@@ -61,7 +61,7 @@ We provide bibtex entries below.
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
-Auto_LiRPA and alpha-beta-CROWN are released under the BSD 3-Clause license. See the LICENSE file in LICENSE-abCROWN
+Auto_LiRPA and alpha-beta-CROWN are released under the BSD 3-Clause license. See the LICENSE file in LICENSE-abCROWN.
 
 ## Contact
-For inquiries or further information, please contact [Xiyue Zhang](https://zhang-xiyue.github.io/).
+For inquiries or further information, please contact Xiyue Zhang.
