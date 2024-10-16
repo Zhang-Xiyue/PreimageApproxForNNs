@@ -151,7 +151,7 @@ class ConfigHandler:
                           hierarchy=h + ["results_file"])
         self.add_argument("--root_path", type=str, default='',
                           help='Root path of VNN-COMP benchmarks folder (VNN-COMP specific).',
-                          hierarchy=h + ["root_path"]) # /home/xiyue/LinInv/vnncomp2022_benchmarks/benchmarks/rl_benchmarks
+                          hierarchy=h + ["root_path"])
 
         h = ["model"]
         self.add_argument("--model", type=str, default="mnist_6_100", help='Model name. Will be evaluated as a python statement.',

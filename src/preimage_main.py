@@ -4,18 +4,16 @@
 ##        contained in the LICENCE file in this directory.             ##
 ##                                                                     ##
 #########################################################################
-"""α,β-CROWN (alpha-beta-CROWN) verifier main interface."""
+""" Preimage generation main interface."""
 
 import copy
 import socket
 import random
-import pickle
-import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 import time
 import gc
 import torch
 import numpy as np
+import os
 from collections import defaultdict
 
 import arguments
@@ -23,22 +21,18 @@ from auto_LiRPA import BoundedTensor
 from auto_LiRPA.perturbations import PerturbationLpNorm
 from auto_LiRPA.utils import stop_criterion_min
 from jit_precompile import precompile_jit_kernels
-# from beta_CROWN_solver import LiRPAConvNet
 # NOTE use newly-designed algorithm for preimage
 from preimage_beta_crown_solver_relu_split import LiRPAConvNet 
 from lp_mip_solver import FSB_score
 from attack_pgd import attack
-from utils import Customized, default_onnx_and_vnnlib_loader, parse_run_mode
+from utils import parse_run_mode
 from nn4sys_verification import nn4sys_verification
-# from batch_branch_and_bound import relu_bab_parallel
 # NOTE use batch_approx
 from preimage_batch_approx_relu_split import relu_bab_parallel
 from preimage_batch_approx_relu_split_dual import relu_bab_parallel_dual
-# from batch_branch_and_bound_input_split import input_bab_parallel
-from test_batch_branch_and_approx_input_split import input_bab_approx_parallel_multi
+from preimage_batch_approx_input_split import input_bab_approx_parallel_multi
 
 from read_vnnlib import batch_vnnlib, read_vnnlib
-from cut_utils import terminate_mip_processes, terminate_mip_processes_by_c_matching
 
 
 def incomplete_verifier(model_ori, data, data_ub=None, data_lb=None, vnnlib=None):
@@ -458,11 +452,7 @@ def main():
         arguments.Config["attack"]["pgd_order"] = "skip"
 
     run_mode, save_path, file_root, example_idx_list, model_ori, vnnlib_all, shape = parse_run_mode()
-    verification_summary = defaultdict(list)
-    time_all_instances = []
-    status_per_sample_list = []
     bab_ret = []
-    cnt = 0  # Number of examples in this run.
     select_instance = arguments.Config["data"]["select_instance"]
 
     for new_idx, csv_item in enumerate(example_idx_list):
