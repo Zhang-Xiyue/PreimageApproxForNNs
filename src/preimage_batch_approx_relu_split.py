@@ -22,8 +22,8 @@ from torch.distributions import Uniform
 import arguments
 
 from branching_domains import select_batch
-from adv_domains import AdvExamplePool
-from bab_attack import beam_mip_attack, find_promising_domains, bab_attack
+# from adv_domains import AdvExamplePool
+# from bab_attack import beam_mip_attack, find_promising_domains, bab_attack
 from cut_utils import fetch_cut_from_cplex, generate_cplex_cuts, clean_net_mps_process, cplex_update_general_beta
 
 from test_polyhedron_util import post_process_A, calc_input_coverage_initial_image_under, calc_input_coverage_initial_image_over

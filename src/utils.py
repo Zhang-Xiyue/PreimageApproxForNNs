@@ -330,7 +330,8 @@ def load_model(weights_loaded=True):
     """
     Load the model architectures and weights
     """
-
+    print("check model", arguments.Config["model"]["name"] is None, arguments.Config["model"]["onnx_path"])
+    
     assert arguments.Config["model"]["name"] is None or arguments.Config["model"]["onnx_path"] is None, (
         "Conflict detected! User should specify model path by either --model or --onnx_path! "
         "The cannot be both specified.")

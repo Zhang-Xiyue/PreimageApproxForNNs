@@ -20,13 +20,11 @@ import arguments
 from auto_LiRPA import BoundedTensor
 from auto_LiRPA.perturbations import PerturbationLpNorm
 from auto_LiRPA.utils import stop_criterion_min
-from jit_precompile import precompile_jit_kernels
 # NOTE use newly-designed algorithm for preimage
 from preimage_beta_crown_solver_relu_split import LiRPAConvNet 
-from lp_mip_solver import FSB_score
-from attack_pgd import attack
+# from lp_mip_solver import FSB_score
 from utils import parse_run_mode
-from nn4sys_verification import nn4sys_verification
+# from nn4sys_verification import nn4sys_verification
 # NOTE use batch_approx
 from preimage_batch_approx_relu_split import relu_bab_parallel
 from preimage_batch_approx_relu_split_dual import relu_bab_parallel_dual
@@ -444,13 +442,20 @@ def main():
     if arguments.Config["general"]["double_fp"]:
         torch.set_default_dtype(torch.float64)
 
-    if arguments.Config["general"]["precompile_jit"]:
-        precompile_jit_kernels()
-
     if arguments.Config["specification"]["norm"] != np.inf and arguments.Config["attack"]["pgd_order"] != "skip":
         print('Only Linf-norm attack is supported, the pgd_order will be changed to skip')
         arguments.Config["attack"]["pgd_order"] = "skip"
-
+    # Get the current directory
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    # Go to the parent directory
+    parent_dir = os.path.dirname(current_dir)
+    # Specify the model path
+    if arguments.Config["model"]["onnx_path"] is not None:
+        arguments.Config["model"]["onnx_path"] = os.path.join(parent_dir, arguments.Config["model"]["onnx_path"])
+        print(arguments.Config["model"]["onnx_path"])
+    elif arguments.Config["model"]["path"] is not None:
+        arguments.Config["model"]["path"] = os.path.join(parent_dir, arguments.Config["model"]["path"])
+        print(arguments.Config["model"]["path"])
     run_mode, save_path, file_root, example_idx_list, model_ori, vnnlib_all, shape = parse_run_mode()
     bab_ret = []
     select_instance = arguments.Config["data"]["select_instance"]
@@ -575,7 +580,12 @@ def main():
         dual_param_enabled = arguments.Config["solver"]["beta-crown"]["beta"]
         preimage_over = arguments.Config["preimage"]["over_approx"]
         preimage_under = arguments.Config["preimage"]["under_approx"]
-        
+        print(arguments.Config["preimage"]["result_dir"])
+        # if arguments.Config["preimage"]["result_dir"] is None:
+        arguments.Config["preimage"]["result_dir"] = os.path.join(parent_dir, arguments.Config["preimage"]["result_dir"])
+        print(f'Using result directory: {arguments.Config["preimage"]["result_dir"]}')
+        if not os.path.exists(arguments.Config["preimage"]["result_dir"]):
+            os.makedirs(arguments.Config["preimage"]["result_dir"])
         if 'MNIST' in dataset_tp:
             if arguments.Config["preimage"]["worst_beta"]:
                 log_file = os.path.join(arguments.Config["preimage"]["result_dir"], '{}_{}_img_{}_beta_worst_{}.txt'.format(dataset_tp, arguments.Config["model"]["name"], arguments.Config["data"]["start"], arguments.Config["preimage"]["worst_beta"]))
@@ -587,7 +597,7 @@ def main():
             elif arguments.Config["preimage"]["worst_beta"]: 
                 log_file = os.path.join(arguments.Config["preimage"]["result_dir"], '{}_input_enable_{}_beta_{}_worst.txt'.format(dataset_tp, split_input_aligned, dual_param_enabled))
             else:
-                log_file = os.path.join(arguments.Config["preimage"]["result_dir"], '{}_input_enable_{}_beta_{}_0.9.txt'.format(dataset_tp, split_input_aligned, dual_param_enabled))
+                log_file = os.path.join(arguments.Config["preimage"]["result_dir"], '{}_input_enable_{}_beta_{}.txt'.format(dataset_tp, split_input_aligned, dual_param_enabled))
         if dataset_tp == 'vcas':
             with open(log_file, "a") as f:
                 f.write("VCAS-21-{}, Over {}, Under {}, Spec {}, upper_time_loss {}, -- #Subdomain: {}, Time: {:.3f}, Coverage: {:.3f}  \n".format(arguments.Config["preimage"]["vcas_idx"], preimage_over, preimage_under, 

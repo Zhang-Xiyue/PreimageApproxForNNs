@@ -6,9 +6,7 @@ preimage:
   threshold: 0.75
   label: 0
 model:
-  name:  "cartpole"
   onnx_path: "model_dir/cartpole.onnx"
-  path: None
 specification:
   type: 'bound'  
   robustness_type: "verified-acc"
@@ -21,6 +19,6 @@ solver:
   batch_size: 50
 bab:
   branching:
-    branching_method: "preimg"
+    method: "preimg"
     input_split:
       enable: True
