@@ -38,6 +38,8 @@ You can find the parameter configuration file in `src/preimg_configs`
 ```
 python preimage_main.py --config preimg_configs/cartpole.yaml
 ```
+You can find the detailed explanation of the most useful parameters in this [configuration file](https://github.com/Zhang-Xiyue/PreimageApproxForNNs/blob/main/src/preimg_configs/cartpole.yaml).
+
 ## Data 
 The dataset used for this project is available at [VNN-COMP2022](https://github.com/ChristopherBrix/vnncomp2022).
 
