@@ -32,7 +32,12 @@ Set up the environment using the *requirements* file
 pip install -r requirements.txt
 ```
 ## Usage
-Example scripts
+### Example scripts
+You can find the parameter configuration file in `src/preimg_configs` 
+1. To generate preimage for the Cartpole task, run
+```
+python preimage_main.py --config preimg_configs/cartpole.yaml
+```
 ## Data 
 The dataset used for this project is available at [VNN-COMP2022](https://github.com/ChristopherBrix/vnncomp2022).
 
