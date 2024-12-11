@@ -156,7 +156,7 @@ class ConfigHandler:
         h = ["model"]
         self.add_argument("--model", type=str, default=None, help='Model name. Will be evaluated as a python statement.',
                           hierarchy=h + ["name"]) # e.g., "mnist_6_100"
-        self.add_argument("--load_model", type=str, default="models/eran/mnist_6_100_nat.pth",
+        self.add_argument("--load_model", type=str, default=None,
                           help='Load pretrained model from this specified path.', hierarchy=h + ["path"]) 
         # e.g., "./models/eran/mnist_6_100_nat.pth"
         self.add_argument("--onnx_path", type=str, default=None, help='Path to .onnx model file.',

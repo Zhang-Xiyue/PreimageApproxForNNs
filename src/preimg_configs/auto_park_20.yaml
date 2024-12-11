@@ -1,12 +1,12 @@
 preimage:
+  result_dir: "result_dir"
+  over_approx: False
+  under_approx: True
   threshold: 0.9
   label: 0
-  runner_up: 1
-  vcas_idx: 0
 model:
   name:  auto_park_20
-  path: /home/xiyue/LinInv/model_dir/model_auto_park_auto_park_model_20.pt
-  onnx_path: None
+  path: "model_dir/model_auto_park_auto_park_model_20.pt"
 data:
   dataset: auto_park
   num_outputs: 4
@@ -19,5 +19,6 @@ solver:
   batch_size: 50
 bab:
   branching:
+    method: "preimg"
     input_split:
       enable: True

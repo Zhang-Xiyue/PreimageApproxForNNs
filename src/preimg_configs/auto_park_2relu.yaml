@@ -1,4 +1,5 @@
 preimage:
+  result_dir: "result_dir"
   threshold: 0.9
   label: 0
   runner_up: 1
