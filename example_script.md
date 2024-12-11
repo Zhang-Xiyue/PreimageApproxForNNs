@@ -4,6 +4,23 @@ This file contains the scripts for benchmark tasks used in the article.
 ```
 python preimage_main.py --config preimg_configs/cartpole.yaml
 ```
-Flip the boolean arguments for `under_approx` and `over_approx` in the YAML file for generating preimage over-approximation. 
+To generate preimage over-approximation, flip the boolean arguments for `under_approx` and `over_approx` in the YAML file. 
 
-The `threshold` should be greater than 1 for over-approximation and less than 1 for uncer-approximation.
+The `threshold` should be greater than 1 for over-approximation and less than 1 for under-approximation.
+
+2. To generate preimage under-approximation for the Vehicle Parking task, run
+```
+python preimage_main.py --config preimg_configs/auto_park_under.yaml
+```
+
+Correspondingly, to generate preimage over-approximation for the Vehicle Parking task, run
+```
+python preimage_main.py --config preimg_configs/auto_park_over.yaml
+```
+
+3. To generate preimage approximation for the Collisian Avodiance models, run
+```
+python preimage_main.py --config preimg_configs/vcas.yaml
+```
+Change the parmater `vcas_idx` to specify the vcas model ID and set the corresponding model path using the parameter `onnx_path`
+

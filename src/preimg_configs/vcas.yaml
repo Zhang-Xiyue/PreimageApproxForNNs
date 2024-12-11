@@ -1,0 +1,24 @@
+preimage:
+  result_dir: "result_dir"
+  over_approx: False
+  under_approx: True
+  threshold: 0.9
+  label: 0
+  vcas_idx: 1
+model:
+  onnx_path: model_dir/VCAS_21/VertCAS_1.onnx
+data:
+  dataset: vcas
+  num_outputs: 9
+  start: 0
+  end: 1
+specification:
+  type: 'bound'
+  robustness_type: "verified-acc"
+solver:
+  batch_size: 50
+bab:
+  branching:
+    method: "preimg"
+    input_split:
+      enable: True

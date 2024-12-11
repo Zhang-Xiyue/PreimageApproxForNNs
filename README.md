@@ -36,16 +36,13 @@ pip install -r requirements.txt
 You can find the parameter configuration file in `src/preimg_configs` and fully-specified explanation for each argument in `arguments.py`. 
 More complete YAML files and a separate document to explain the configurable parameters are coming ...
 
-1. To generate preimage for the Cartpole task, run
+To generate preimage for the Cartpole task, run
 ```
 python preimage_main.py --config preimg_configs/cartpole.yaml
 ```
 You can find the detailed explanation of the most useful parameters in this [configuration file](https://github.com/Zhang-Xiyue/PreimageApproxForNNs/blob/main/src/preimg_configs/cartpole.yaml).
 
-2. Generate preimage under-approximation for the Vehicle Parking task, run
-```
-python preimage_main.py --config preimg_configs/auto_park_20.yaml
-```
+
 **Find more example scripts in this [example-script](https://github.com/Zhang-Xiyue/PreimageApproxForNNs/blob/main/example_script.md) file.**
 
 ## Data 
