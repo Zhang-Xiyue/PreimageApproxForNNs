@@ -33,7 +33,9 @@ pip install -r requirements.txt
 ```
 ## Usage
 ### Example scripts
-You can find the parameter configuration file in `src/preimg_configs` 
+You can find the parameter configuration file in `src/preimg_configs` and fully-specified explanation for each argument in `arguments.py`. 
+More complete YAML files are coming ...
+
 1. To generate preimage for the Cartpole task, run
 ```
 python preimage_main.py --config preimg_configs/cartpole.yaml
