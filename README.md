@@ -46,7 +46,7 @@ You can find the detailed explanation of the most useful parameters in this [con
 ```
 python preimage_main.py --config preimg_configs/auto_park_20.yaml
 ```
-**Find more example scripts in this Example-Script file.**
+**Find more example scripts in this example-script() file.**
 
 ## Data 
 The dataset used for this project is available at [VNN-COMP2022](https://github.com/ChristopherBrix/vnncomp2022).
