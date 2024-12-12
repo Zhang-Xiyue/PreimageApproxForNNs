@@ -24,3 +24,7 @@ python preimage_main.py --config preimg_configs/vcas.yaml
 ```
 Change the parmater `vcas_idx` to specify the vcas model ID and set the corresponding model path using the parameter `onnx_path`
 
+4. For the lunarlander task, run
+```
+python preimage_main.py --config preimg_configs/lunarlander.yaml
+```
