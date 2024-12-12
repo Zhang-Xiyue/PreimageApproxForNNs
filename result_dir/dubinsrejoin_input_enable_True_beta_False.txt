@@ -1,0 +1,2 @@
+dubinsrejoin, Over False, Under True, Spec 0, Runner 0, -- #Subdomain: 1, Time: 2.656, Coverage: 1.000 
+dubinsrejoin, Over False, Under True, Spec 0, Runner 4, -- #Subdomain: 211, Time: 347.897, Coverage: 0.751 

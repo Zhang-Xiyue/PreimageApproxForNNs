@@ -28,3 +28,8 @@ Change the parmater `vcas_idx` to specify the vcas model ID and set the correspo
 ```
 python preimage_main.py --config preimg_configs/lunarlander.yaml
 ```
+
+5. For the dubinsrejoin task, run
+```
+python preimage_main.py --config preimg_configs/dubinsrejoin.yaml
+```

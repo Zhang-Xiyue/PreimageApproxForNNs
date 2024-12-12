@@ -1,12 +1,12 @@
 preimage:
+  result_dir: "result_dir"
+  over_approx: False
+  under_approx: True
   threshold: 0.75
   label: 0
   runner_up: 4
 model:
-  name:  None
-  onnx_path: "/home/xiyue/LinInv/model_dir/dubinsrejoin.onnx"
-  path: None
-  
+  onnx_path: "model_dir/dubinsrejoin.onnx" 
 data:
   dataset: dubinsrejoin
   num_outputs: 8
@@ -14,3 +14,9 @@ data:
   end: 1
 specification:
   type: 'bound'
+  robustness_type: "verified-acc"
+bab:
+  branching:
+    method: "preimg"
+    input_split:
+      enable: True

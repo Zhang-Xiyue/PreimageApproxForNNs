@@ -66,7 +66,7 @@ class ConfigHandler:
                     hierarchy=h + ["threshold"])
         self.add_argument("--label", type=int, default=1, help='Indicate which label to build input preimage for.',
                           hierarchy=h + ["label"])
-        self.add_argument("--runner_up", type=int, default=0, help='Indicate which label to build safety property for.',
+        self.add_argument("--runner_up", type=int, default=0, help='Indicate which label to build safety property for, for dubinsrejoin indicate the label for throttle actions.',
                           hierarchy=h + ["runner_up"])
         self.add_argument("--vcas_idx", type=int, default=0, help='Indicate VCAS model index to build input preimage for.',
                           hierarchy=h + ["vcas_idx"])    
