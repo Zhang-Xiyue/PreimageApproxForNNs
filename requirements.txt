@@ -56,7 +56,7 @@ numexpr @ file:///tmp/build/80754af9/numexpr_1640704205123/work
 numpy @ file:///tmp/build/80754af9/numpy_and_numpy_base_1649782762302/work
 oauthlib==3.1.0
 onnx==1.11.0
-onnx2pytorch @ git+https://github.com/KaidiXu/onnx2pytorch@102cf22e64ea7fae9462c1ba0feaa250ac0bc628
+onnx2pytorch==0.5.1
 onnxruntime==1.11.0
 opt-einsum @ file:///tmp/build/80754af9/opt_einsum_1621500238896/work
 packaging @ file:///tmp/build/80754af9/packaging_1637314298585/work
