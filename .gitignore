@@ -28,6 +28,7 @@ src/tests/
 # Files
 src/test_relu_score_unstable.py
 src/preimage_runnerup_label.py
+req_convert.py
 
 
 
