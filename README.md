@@ -35,6 +35,7 @@ Or if you have the conda environment manager, you can set up using the *environm
 ```
 conda env create -f environment.yml
 ```
+If you runinto installation issue on a specific package, e.g., pplpy, you can modify the *environment.yml* file and specify a different version that works for your system, or you can try creating the environment without pplpy first then install it manually.
 
 ## Usage
 ### Example scripts
