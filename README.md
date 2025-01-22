@@ -31,6 +31,11 @@ Set up the environment using the *requirements* file
 ```
 pip install -r requirements.txt
 ```
+Or if you have the conda environment manager, you can set up using the *environment.yml* file
+```
+conda env create -f environment.yml
+```
+
 ## Usage
 ### Example scripts
 You can find the parameter configuration file in `src/preimg_configs` and fully-specified explanation for each argument in `arguments.py`. 
