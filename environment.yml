@@ -1,4 +1,4 @@
-name: alpha-beta-crown-gcp
+name: premap
 channels:
   - gurobi
   - pytorch
@@ -201,4 +201,4 @@ dependencies:
     - onnx2pytorch==0.5.1
     - onnxruntime==1.11.0
     - pplpy==0.8.7
-prefix: /home/xiyue/miniconda3/envs/alpha-beta-crown-gcp
+
