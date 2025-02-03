@@ -83,3 +83,7 @@ Auto_LiRPA and alpha-beta-CROWN are released under the BSD 3-Clause license. See
 
 ## Contact
 For inquiries or further information, please contact Xiyue Zhang.
+
+## Acknowledgements
+PREMAP has been partially developed with the support of European Union’s ELSA – European Lighthouse on Secure and Safe AI, Horizon Europe, grant agreement No. 101070617 under UK guarantee.
+
