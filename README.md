@@ -87,3 +87,4 @@ For inquiries or further information, please contact Xiyue Zhang.
 ## Acknowledgements
 PREMAP has been partially developed with the support of European Union’s ELSA – European Lighthouse on Secure and Safe AI, Horizon Europe, grant agreement No. 101070617 under UK guarantee.
 
+<img src="logo/elsa.jpg" alt="elsa" style="width:70px;"/>
