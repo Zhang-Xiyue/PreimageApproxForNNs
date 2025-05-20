@@ -254,21 +254,21 @@ def inference_onnx(path, *inputs):
 @torch.no_grad()
 def load_model_onnx(path, compute_test_acc=False, quirks=None, input_shape=None):
     onnx_optimization_flags = arguments.Config["model"]["onnx_optimization_flags"]
-    if arguments.Config["model"]["cache_onnx_conversion"]:
-        path_cache = f'{path}.cache'
-        if os.path.exists(path_cache):
-            print(f'Loading converted model from {path_cache}')
-            return torch.load(path_cache)
-    quirks = {} if quirks is None else quirks
-    if arguments.Config["model"]["onnx_quirks"]:
-        try:
-            config_quirks = literal_eval(arguments.Config["model"]["onnx_quirks"])
-        except ValueError as e:
-            print(f'ERROR: onnx_quirks {arguments.Config["model"]["onnx_quirks"]} cannot be parsed!')
-            raise
-        assert isinstance(config_quirks, dict)
-        deep_update(quirks, config_quirks)
-    print(f'Loading onnx {path} wih quirks {quirks}')
+    # if arguments.Config["model"]["cache_onnx_conversion"]:
+    #     path_cache = f'{path}.cache'
+    #     if os.path.exists(path_cache):
+    #         print(f'Loading converted model from {path_cache}')
+    #         return torch.load(path_cache)
+    # quirks = {} if quirks is None else quirks
+    # if arguments.Config["model"]["onnx_quirks"]:
+    #     try:
+    #         config_quirks = literal_eval(arguments.Config["model"]["onnx_quirks"])
+    #     except ValueError as e:
+    #         print(f'ERROR: onnx_quirks {arguments.Config["model"]["onnx_quirks"]} cannot be parsed!')
+    #         raise
+    #     assert isinstance(config_quirks, dict)
+    #     deep_update(quirks, config_quirks)
+    # print(f'Loading onnx {path} wih quirks {quirks}')
 
     # pip install onnx2pytorch
     onnx_model = unzip_and_optimize_onnx(path, onnx_optimization_flags)
@@ -291,7 +291,8 @@ def load_model_onnx(path, compute_test_acc=False, quirks=None, input_shape=None)
         # User specify input_shape
         onnx_shape = arguments.Config["model"]["input_shape"][1:]
 
-    pytorch_model = onnx2pytorch.ConvertModel(onnx_model, experimental=True, quirks=quirks)
+    # pytorch_model = onnx2pytorch.ConvertModel(onnx_model, experimental=True, quirks=quirks)
+    pytorch_model = onnx2pytorch.ConvertModel(onnx_model, experimental=True)
     pytorch_model.eval()
     pytorch_model.to(dtype=torch.get_default_dtype())
     print(pytorch_model)
@@ -320,8 +321,8 @@ def load_model_onnx(path, compute_test_acc=False, quirks=None, input_shape=None)
     if compute_test_acc:
         get_test_acc(pytorch_model, onnx_shape)
 
-    if arguments.Config["model"]["cache_onnx_conversion"]:
-        torch.save((pytorch_model, onnx_shape), path_cache)
+    # if arguments.Config["model"]["cache_onnx_conversion"]:
+    #     torch.save((pytorch_model, onnx_shape), path_cache)
 
     return pytorch_model, onnx_shape
 

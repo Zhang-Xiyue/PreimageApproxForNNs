@@ -54,17 +54,17 @@ class ConfigHandler:
         self.add_argument('--config', type=str, help='Path to YAML format config file.', hierarchy=None)
         # Add preimage arguments
         h = ["preimage"]
-        self.add_argument("--sample_dir", type=str, default=None, help='Directory to save and load samples for loss estimation and polytope coverage.',
+        self.add_argument("--sample_dir", type=str, default="sample_dir", help='Directory to save and load samples for loss estimation and polytope coverage.',
                           hierarchy=h + ["sample_dir"]) 
-        self.add_argument("--result_dir", type=str, default=None, help='Result directory to specify for saving your results.',
+        self.add_argument("--result_dir", type=str, default="result_dir", help='Result directory to specify for saving your results.',
                           hierarchy=h + ["result_dir"])       
-        self.add_argument("--over_approx", type=bool, default=True, help='To generate preimage over-approximation or not.',
+        self.add_argument("--over_approx", type=bool, default=False, help='To generate preimage over-approximation or not.',
                     hierarchy=h + ["over_approx"])
-        self.add_argument("--under_approx", type=bool, default=False, help='To generate preimage under-approximation or not.',
+        self.add_argument("--under_approx", type=bool, default=True, help='To generate preimage under-approximation or not.',
                     hierarchy=h + ["under_approx"])
-        self.add_argument("--threshold", type=float, default=1.25, help='Target preimage coverage threshold for termination. No less than 1 for over-approximation and no greater than 1 for under-approximation.',
+        self.add_argument("--threshold", type=float, default=0.75, help='Target preimage coverage threshold for termination. No less than 1 for over-approximation and no greater than 1 for under-approximation.',
                     hierarchy=h + ["threshold"])
-        self.add_argument("--label", type=int, default=1, help='Indicate which label to build input preimage for.',
+        self.add_argument("--label", type=int, default=0, help='Indicate which label to build input preimage for.',
                           hierarchy=h + ["label"])
         self.add_argument("--runner_up", type=int, default=0, help='Indicate which label to build safety property for, for dubinsrejoin indicate the label for throttle actions.',
                           hierarchy=h + ["runner_up"])
@@ -90,7 +90,7 @@ class ConfigHandler:
                           hierarchy=h + ["branch_budget"])        
         self.add_argument("--multi_spec", type=bool, default=False, help='The multi specification support for preimage analysis.',
                     hierarchy=h + ["multi_spec"])
-        self.add_argument("--sample_instability", type=bool, default=True, help='Use sampling identified instability for preimage analysis.',
+        self.add_argument("--sample_instability", type=bool, default=False, help='Use sampling identified instability for preimage analysis.',
                     hierarchy=h + ["instability"])
         self.add_argument("--patch", type=bool, default=True, help='The attack type support for image task preimage analysis.',
                     hierarchy=h + ["patch"])        
@@ -159,7 +159,7 @@ class ConfigHandler:
         self.add_argument("--load_model", type=str, default=None,
                           help='Load pretrained model from this specified path.', hierarchy=h + ["path"]) 
         # e.g., "./models/eran/mnist_6_100_nat.pth"
-        self.add_argument("--onnx_path", type=str, default=None, help='Path to .onnx model file.',
+        self.add_argument("--onnx_path", type=str, default="model_dir/cartpole.onnx", help='Path to .onnx model file.',
                           hierarchy=h + ["onnx_path"])
         self.add_argument("--onnx_path_prefix", type=str, default='',
                           help='Add a prefix to .onnx model path to correct malformed csv files.',
@@ -186,10 +186,10 @@ class ConfigHandler:
                           help='Onnx graph optimization config.', hierarchy=h + ["onnx_optimization_flags"])
 
         h = ["data"]
-        self.add_argument("--dataset", type=str, default="MNIST_ERAN_UN",
+        self.add_argument("--dataset", type=str, default="cartpole",
                           help="Dataset name. Dataset must be defined in utils.py. For customized data, checkout custom_model_data.py.",
                           hierarchy=h + ["dataset"]) # e.g., "MNIST_ERAN_UN"
-        self.add_argument('--num_outputs', type=int, default=10, help="Number of classes for classification problem.",
+        self.add_argument('--num_outputs', type=int, default=2, help="Number of classes for classification problem.",
                           hierarchy=h + ["num_outputs"]) # e.g., 10 for a 10-class classification problem
         self.add_argument("--start", type=int, default=0, help='Start from the i-th property in specified dataset.',
                           hierarchy=h + ["start"])
@@ -212,10 +212,10 @@ class ConfigHandler:
                           hierarchy=h + ["data_idx_file"])
 
         h = ["specification"]
-        self.add_argument("--spec_type", type=str, default='lp', choices=['lp', 'bound'],
+        self.add_argument("--spec_type", type=str, default='bound', choices=['lp', 'bound'],
                           help='Type of verification specification. "lp" = L_p norm, "bounds" = element-wise lower and upper bound provided by dataloader.',
                           hierarchy=h + ["type"])
-        self.add_argument("--robustness_type", type=str, default="runnerup",
+        self.add_argument("--robustness_type", type=str, default="verified-acc",
                           choices=["verified-acc", "runnerup", "clean-acc", "specify-target"],
                           help='For robustness verification: verify against all labels ("verified-acc" mode), or just the runnerup labels ("runnerup" mode), '
                                'or using a specified label in dataset ("speicify-target" mode, only used for oval20). Not used when a VNNLIB spec is used.',

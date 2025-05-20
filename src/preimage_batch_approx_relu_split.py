@@ -604,7 +604,10 @@ def get_act_vecs(prop_samples, model, dataset_tp):
         pre_relu_layer = ['2', '4']
     elif "vcas" in dataset_tp:
         pre_relu_layer = ['1']
+    elif "cartpole" in dataset_tp:
+        pre_relu_layer = ['1']
     node_types = [m for m in list(model.modules())]
+    print('check nodes', node_types)
     activation = {}
     def get_activation(name):
         def hook(model, input, output):
@@ -714,29 +717,36 @@ def calc_mask_concrete_samples_from_unstable_idx(x, net, y):
 def calc_mask_concrete_samples(x, net, y):
     sample_num = arguments.Config['preimage']["sample_num"]
     atk_tp = arguments.Config["preimage"]["atk_tp"]
-    multi_spec = arguments.Config["preimage"]["multi_spec"]
-    x_L, x_U = x.ptb.x_L, x.ptb.x_U
-    img_shape = [-1] + list(x.shape[1:])
-    img = x.data.reshape(x.shape[0], -1)
-    x_L = x_L.reshape(x_L.shape[0], -1)
-    x_U = x_U.reshape(x_U.shape[0], -1)
-    torch.manual_seed(arguments.Config["general"]["seed"])
-    # torch.manual_seed(arguments.Config["general"]["seed"]) 
-    if multi_spec:
-        prop_samples = Uniform(x_L, x_U).sample([sample_num])
-    else:
-        if atk_tp == 'l_inf':
+    if arguments.Config["model"]["onnx_path"] is None:
+        multi_spec = arguments.Config["preimage"]["multi_spec"]
+        x_L, x_U = x.ptb.x_L, x.ptb.x_U
+        img_shape = [-1] + list(x.shape[1:])
+        img = x.data.reshape(x.shape[0], -1)
+        x_L = x_L.reshape(x_L.shape[0], -1)
+        x_U = x_U.reshape(x_U.shape[0], -1)
+        torch.manual_seed(arguments.Config["general"]["seed"])
+        # torch.manual_seed(arguments.Config["general"]["seed"]) 
+        if multi_spec:
             prop_samples = Uniform(x_L, x_U).sample([sample_num])
-            prop_samples = torch.squeeze(prop_samples).reshape(img_shape)
         else:
-            prop_samples = img.repeat(sample_num,1)
-            pixel_pos = calc_pixel_pos(atk_tp)
-            pixel_pos = torch.tensor(pixel_pos).to(arguments.Config["general"]["device"])
-            pixel_lower = x_L[0][pixel_pos]
-            pixel_upper = x_U[0][pixel_pos]
-            pixel_vals = Uniform(pixel_lower, pixel_upper).sample([sample_num])
-            prop_samples[:, pixel_pos] = pixel_vals
-            prop_samples = prop_samples.reshape(img_shape)
+            if atk_tp == 'l_inf':
+                prop_samples = Uniform(x_L, x_U).sample([sample_num])
+                prop_samples = torch.squeeze(prop_samples).reshape(img_shape)
+            else:
+                prop_samples = img.repeat(sample_num,1)
+                pixel_pos = calc_pixel_pos(atk_tp)
+                pixel_pos = torch.tensor(pixel_pos).to(arguments.Config["general"]["device"])
+                pixel_lower = x_L[0][pixel_pos]
+                pixel_upper = x_U[0][pixel_pos]
+                pixel_vals = Uniform(pixel_lower, pixel_upper).sample([sample_num])
+                prop_samples[:, pixel_pos] = pixel_vals
+                prop_samples = prop_samples.reshape(img_shape)
+    else:
+        x_L, x_U = x.ptb.x_L, x.ptb.x_U
+        prop_samples = Uniform(x_L, x_U).sample([sample_num])
+        print('check prop_samples shape', prop_samples.shape)
+    if not os.path.exists(arguments.Config['preimage']["sample_dir"]):
+        os.mkdir(arguments.Config['preimage']["sample_dir"])
     torch.save(prop_samples, os.path.join(arguments.Config['preimage']["sample_dir"], 'sample_{}_{}.pt'.format(arguments.Config["data"]["dataset"],atk_tp)))
     model = net.model_ori
     model.eval()   
@@ -746,17 +756,17 @@ def calc_mask_concrete_samples(x, net, y):
     orig_pred = model(x)
     orig_pred = orig_pred.argmax()
     print(f"orig_pred: {orig_pred}")
-    if multi_spec:
-        for i in range(prop_samples.shape[1]):
-            predicted = model(prop_samples[:,i,:])
-            predicted = predicted.argmax(dim=1).cpu().detach().numpy()
-            idxs = np.where(predicted==y)[0]
-            print(f'length of label {len(idxs)} preserved samples for spec {i}')             
-    else:  
-        predicted = model(prop_samples)
-        predicted = predicted.argmax(dim=1).cpu().detach().numpy()
-        idxs = np.where(predicted==y)[0]
-        print('length of label preserved samples', len(idxs)) 
+    # if multi_spec:
+    #     for i in range(prop_samples.shape[1]):
+    #         predicted = model(prop_samples[:,i,:])
+    #         predicted = predicted.argmax(dim=1).cpu().detach().numpy()
+    #         idxs = np.where(predicted==y)[0]
+    #         print(f'length of label {len(idxs)} preserved samples for spec {i}')             
+    # else:  
+    predicted = model(prop_samples)
+    predicted = predicted.argmax(dim=1).cpu().detach().numpy()
+    idxs = np.where(predicted==y)[0]
+    print('length of label preserved samples', len(idxs)) 
     pre_relu_layer, activation = get_act_vecs(prop_samples, model, arguments.Config["data"]["dataset"])
     act_file = os.path.join(arguments.Config['preimage']["sample_dir"], 'act_vec_{}_{}.pkl'.format(arguments.Config["data"]["dataset"], atk_tp))
     with open(act_file, 'wb') as f:
@@ -852,42 +862,44 @@ def relu_bab_parallel(net, domain, x,y, use_neuron_set_strategy=False, refined_l
 
     y_label = y[0][0]
     # print('check data label', y_label)
-    if arguments.Config["model"]["onnx_path"] is None:
-        model_tp = arguments.Config["model"]["name"]    
-        if model_tp == 'mnist_6_100':
-            mask_sample_ori, score_all, unstable_indices = calc_mask_concrete_samples_from_unstable_idx(x, net, y_label)
-        else:                   
-            mask_sample_ori, score_all, unstable_indices = calc_mask_concrete_samples(x, net, y_label)
+    if sample_based_instability:
+        if arguments.Config["model"]["onnx_path"] is None:
+            model_tp = arguments.Config["model"]["name"]    
+            if model_tp == 'mnist_6_100':
+                mask_sample_ori, score_all, unstable_indices = calc_mask_concrete_samples_from_unstable_idx(x, net, y_label)
+            else:                   
+                mask_sample_ori, score_all, unstable_indices = calc_mask_concrete_samples(x, net, y_label)
+        else:
+            dataset_tp = arguments.Config["data"]["dataset"]
+            if "MNIST" in dataset_tp:
+                sample_dir = os.path.join(sample_dir, 'mnist_6_100')
+            mask_sample_file = os.path.join(sample_dir, f"{dataset_tp}/mask_sample_{dataset_tp}.pkl")
+            score_all_file = os.path.join(sample_dir, f"{dataset_tp}/score_all_{dataset_tp}.pkl")
+            unstable_indices_file = os.path.join(sample_dir, f"{dataset_tp}/unstable_indices_{dataset_tp}.pkl") 
+            # if dataset_tp == "vcas":
+                # upper_time_loss = arguments.Config["preimage"]["upper_time_loss"]
+                # mask_sample_file = os.path.join(sample_dir, f"mask_sample_{dataset_tp}_{upper_time_loss}.pkl")
+                # score_all_file = os.path.join(sample_dir, f"score_all_{dataset_tp}_{upper_time_loss}.pkl")
+                # unstable_indices_file = os.path.join(sample_dir, f"unstable_indices_{dataset_tp}_{upper_time_loss}.pkl") 
+            # else:
+            #     mask_sample_file = os.path.join(sample_dir, f"mask_sample_{dataset_tp}.pkl")
+            #     score_all_file = os.path.join(sample_dir, f"score_all_{dataset_tp}.pkl")
+            #     unstable_indices_file = os.path.join(sample_dir, f"unstable_indices_{dataset_tp}.pkl")
+            with open(mask_sample_file, 'rb') as f:
+                mask_sample_ori = pickle.load(f)
+            with open(score_all_file, 'rb') as f:
+                score_all = pickle.load(f)
+            with open(unstable_indices_file, 'rb') as f:
+                unstable_indices = pickle.load(f)    
+        score_restore_ori = restore_scores(score_all, unstable_indices, mask_sample_ori)
+        tot_ambi_nodes_sample = 0
+        for i, layer_mask in enumerate(mask_sample_ori):
+            n_unstable = int(torch.sum(layer_mask).item())
+            print(f'layer {i} size {layer_mask.shape[0]} unstable {n_unstable}')
+            tot_ambi_nodes_sample += n_unstable
+        print(f'-----------------\n# of unstable neurons (Sample): {tot_ambi_nodes_sample}\n-----------------\n')
     else:
-        dataset_tp = arguments.Config["data"]["dataset"]
-        if "MNIST" in dataset_tp:
-            sample_dir = os.path.join(sample_dir, 'mnist_6_100')
-        mask_sample_file = os.path.join(sample_dir, f"{dataset_tp}/mask_sample_{dataset_tp}.pkl")
-        score_all_file = os.path.join(sample_dir, f"{dataset_tp}/score_all_{dataset_tp}.pkl")
-        unstable_indices_file = os.path.join(sample_dir, f"{dataset_tp}/unstable_indices_{dataset_tp}.pkl") 
-        # if dataset_tp == "vcas":
-            # upper_time_loss = arguments.Config["preimage"]["upper_time_loss"]
-            # mask_sample_file = os.path.join(sample_dir, f"mask_sample_{dataset_tp}_{upper_time_loss}.pkl")
-            # score_all_file = os.path.join(sample_dir, f"score_all_{dataset_tp}_{upper_time_loss}.pkl")
-            # unstable_indices_file = os.path.join(sample_dir, f"unstable_indices_{dataset_tp}_{upper_time_loss}.pkl") 
-        # else:
-        #     mask_sample_file = os.path.join(sample_dir, f"mask_sample_{dataset_tp}.pkl")
-        #     score_all_file = os.path.join(sample_dir, f"score_all_{dataset_tp}.pkl")
-        #     unstable_indices_file = os.path.join(sample_dir, f"unstable_indices_{dataset_tp}.pkl")
-        with open(mask_sample_file, 'rb') as f:
-            mask_sample_ori = pickle.load(f)
-        with open(score_all_file, 'rb') as f:
-            score_all = pickle.load(f)
-        with open(unstable_indices_file, 'rb') as f:
-            unstable_indices = pickle.load(f)    
-    score_restore_ori = restore_scores(score_all, unstable_indices, mask_sample_ori)
-    tot_ambi_nodes_sample = 0
-    for i, layer_mask in enumerate(mask_sample_ori):
-        n_unstable = int(torch.sum(layer_mask).item())
-        print(f'layer {i} size {layer_mask.shape[0]} unstable {n_unstable}')
-        tot_ambi_nodes_sample += n_unstable
-    print(f'-----------------\n# of unstable neurons (Sample): {tot_ambi_nodes_sample}\n-----------------\n')
-      
+        mask_sample_ori, score_all, unstable_indices = calc_mask_concrete_samples(x, net, y_label)      
     if arguments.Config["solver"]["alpha-crown"]["no_joint_opt"]:
         global_ub, global_lb, _, _, primals, updated_mask, lA, lower_bounds, upper_bounds, pre_relu_indices, slope, history, betas = net.build_the_model_with_refined_bounds(
             domain, x, None, None, stop_criterion_func=stop_criterion(decision_thresh), reference_slopes=None,
@@ -1071,21 +1083,7 @@ def relu_bab_parallel(net, domain, x,y, use_neuron_set_strategy=False, refined_l
         print('Cut time:', time.time() - start_cut)
         print('======================Cut verification ends======================')
 
-    if arguments.Config["bab"]["attack"]["enabled"]:
-        # Max number of fixed neurons during diving.
-        max_dive_fix = int(max_dive_fix_ratio * tot_ambi_nodes)
-        min_local_free = int(min_local_free_ratio * tot_ambi_nodes)
-        adv_pool = AdvExamplePool(net.net, updated_mask, C=net.c)
-        adv_pool.add_adv_images(attack_images)
-        print(f'best adv in pool: {adv_pool.adv_pool[0].obj}, worst {adv_pool.adv_pool[-1].obj}')
-        adv_pool.print_pool_status()
-        find_promising_domains.counter = 0
-        # find_promising_domains.current_method = "bottom-up"
-        find_promising_domains.current_method = "top-down"
-        find_promising_domains.topdown_status = "normal"
-        find_promising_domains.bottomup_status = "normal"
-        beam_mip_attack.started = False
-        global_ub = min(all_label_global_ub, adv_pool.adv_pool[0].obj)
+
 
     glb_record = [[time.time()-start, global_lb]]
     iter_cov_quota = [cov_quota]
@@ -1102,16 +1100,7 @@ def relu_bab_parallel(net, domain, x,y, use_neuron_set_strategy=False, refined_l
                 subdomain_num = len(domains)
                 del domains            
                 return False, preimage_dict_all, Visited, time_cost, iter_cov_quota, subdomain_num
-            if use_bab_attack:
-                max_dive_fix_ratio = arguments.Config["bab"]["attack"]["max_dive_fix_ratio"]
-                min_local_free_ratio = arguments.Config["bab"]["attack"]["min_local_free_ratio"]
-                max_dive_fix = int(max_dive_fix_ratio * tot_ambi_nodes)
-                min_local_free = int(min_local_free_ratio * tot_ambi_nodes)
-                global_lb, batch_ub, domains = bab_attack(
-                        domains, net, batch, pre_relu_indices, 0,
-                        fix_intermediate_layer_bounds=True,
-                        adv_pool=adv_pool,
-                        max_dive_fix=max_dive_fix, min_local_free=min_local_free)
+
 
             # if global_lb is None:
             # cut is enabled
@@ -1170,16 +1159,7 @@ def relu_bab_parallel(net, domain, x,y, use_neuron_set_strategy=False, refined_l
                 subdomain_num = len(domains)
                 del domains            
                 return False, preimage_dict_all, Visited, time_cost, iter_cov_quota, subdomain_num
-            if use_bab_attack:
-                max_dive_fix_ratio = arguments.Config["bab"]["attack"]["max_dive_fix_ratio"]
-                min_local_free_ratio = arguments.Config["bab"]["attack"]["min_local_free_ratio"]
-                max_dive_fix = int(max_dive_fix_ratio * tot_ambi_nodes)
-                min_local_free = int(min_local_free_ratio * tot_ambi_nodes)
-                global_lb, batch_ub, domains = bab_attack(
-                        domains, net, batch, pre_relu_indices, 0,
-                        fix_intermediate_layer_bounds=True,
-                        adv_pool=adv_pool,
-                        max_dive_fix=max_dive_fix, min_local_free=min_local_free)
+
 
             # if global_lb is None:
             # cut is enabled

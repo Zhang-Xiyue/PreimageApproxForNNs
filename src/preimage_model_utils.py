@@ -102,7 +102,7 @@ def load_input_bounds(dataset, truth_label, quant, trans):
             # X = torch.tensor([[-0.25, -0.5, 0.05, 0.05]]).float()
             # X = torch.tensor([[0.25, 0.5, -0.05, -0.5]]).float()
             labels = torch.tensor([truth_label]).long()
-            data_max = torch.tensor([[1, 2, 0, 0]]).reshape(1, -1)
+            data_max = torch.tensor([[1, 2, 0, -1]]).reshape(1, -1)
             data_min = torch.tensor([[-1, 0, -0.2, -2]]).reshape(1, -1)
             # data_max = torch.tensor([[0.5, 1, 0.1, 1]]).reshape(1, -1)
             # data_min = torch.tensor([[-0.5, -1, -0.1, -1]]).reshape(1, -1)
